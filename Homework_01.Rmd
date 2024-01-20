@@ -4,6 +4,7 @@ output:
   pdf_document: default
   html_document: default
   word_document: default
+  latex_engine: default
 subtitle: Due by 11:59pm, Saturday, 1.27.24
 author: S&DS 230
 ---
@@ -35,9 +36,9 @@ You are welcome to work with each other - however, you **MUST** submit your own 
 
 ###Make this line a third level header###
 
-+ Make this line a bullet point
+* Make this line a bullet point
 
-  + Make this line an indented (or level two) bullet point
+  + Make this line an indented (or level two) bullet point 
 
 **[LINK](https://www.nytimes.com/)** (make the word LINK at left link to the New York Times home page AND make it bold)
 
@@ -105,7 +106,7 @@ names(wb)
 #3.5
 head(wb)
 #3.6
-sapply(wb, class)
+sapply(wb, typeof) #fix
 #3.7
 typeof(wb$Pop)
 #3.8
