@@ -1,0 +1,172 @@
+---
+title: "Homework 01 R Basics"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+subtitle: Due by 11:59pm, Saturday, 1.27.24
+author: S&DS 230
+---
+_______________________________________________________________________________
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework assignment contains 5 problems. Edit this `.Rmd` file and insert your responses under the appropriate problems. Submit the knitted output of this file either as a .pdf or .doc file.  To make a pdf file, knit to .doc or .html and then convert to .pdf in either Word or your browser.
+
+Our intent is to help you
+
+1.  Practice basic R coding
+2.  Practice basic R markdown
+3.  Start dealing with data
+
+Don't panic, don't be surprised if you're frustrated.   Come to office hours with JDRS or our excellent TAs/ULAs.   You can also post questions through ED Discussion on CANVAS.
+You are welcome to work with each other - however, you **MUST** submit your own assignment that represents your own solutions.
+
+*Before submitting, delete the instructions on lines 17 through 28*
+
+**(1)  RMarkdown Practice**  *(24 points)*  Change the markdown code below as indicated.
+
+**Make this line bold**
+
+*Make this line italics*
+
+###Make this line a third level header###
+
++ Make this line a bullet point
+
+  + Make this line an indented (or level two) bullet point
+
+**[LINK](https://www.nytimes.com/)** (make the word LINK at left link to the New York Times home page AND make it bold)
+
+```
+Make this line look like R Code
+```
+Below this line, insert a new R chunk, create a vector called `xvec` that contains the integers 2 through 7, and have R display what is in `xvec`.
+```{r eval=TRUE}
+xvec <- 2:7
+print(xvec)
+
+```
+**(2)  R Syntax Practice** *(12 points)* Modify the R code below to follow good R Syntax practices
+
+```{r eval=FALSE}
+x <- 5
+
+x <- c(1, 2, 3)
+
+length(x)
+
+for (i in 1:10){
+  x  <- 1 + 1
+}
+
+x <- 1
+y <- c(3, 4)
+
+```
+
+
+**(3) Data handling** *36 pts* 
+
+(3.1)  Insert a new R code chunk below.  
+(3.2)  Read the .csv stored [HERE](http://reuningscherer.net/S&DS230/data/WB.2016.csv) into a new data frame and call is "wb".  This is the World Bank data I discussed in class two.
+
+(3.3)  Get the dimension of wb.
+
+(3.4)  Get the variable names of wb.
+
+(3.5)  Show the first 6 lines of wb.
+
+(3.6)  Get the data type of each variable.
+
+(3.7)  What is the data type of the variable `Pop`?
+
+(3.8)  Create a new object called `subset` that has only the variables Country, GNI, Exports, and Imports AND only for countries where GNI is greater than 70000.  You'll need to use the `na.omit()` function (use `help(na.omit)`) to eliminate countries missing data for any of the four variables you retain.  You should end up with exactly three countries in `subset`.
+
+(3.9)  Get summary statistics for cell phone lines per 100 people (called `Cell`).   The function you want is `summary()`.
+
+(3.10)  Store the results from (3.9) in a new object called `stats`.  Incidentally, `stats` will be a vector!
+
+(3.11)  Get the length of `stats`.   The function you want is `length()`.
+
+(3.12)  Get r to show the following elements of `stats` : 1,2,3,5,6
+
+```{r}
+#3.2
+wb <- read.csv("http://reuningscherer.net/S&DS230/data/WB.2016.csv")
+
+#3.3
+dim(wb)
+#3.4
+names(wb)
+#3.5
+head(wb)
+#3.6
+sapply(wb, class)
+#3.7
+typeof(wb$Pop)
+#3.8
+na.omit(wb[, c("Country", "GNI", "Exports", "Imports")][wb$GNI > 70000, ])
+#3.9
+summary(wb$Cell)
+#3.10
+stats <- as.vector(summary(wb$Cell))
+print(stats)
+#3.11
+length(stats)
+#3.12
+stats[c(1, 2, 3, 5, 6)]
+```
+**(4) Plots** *16 pts* 
+
+(4.1) Using the `wb` dataset created above, make a scatterplot of "Population" on the x axis and "Cell" on the y axis. Include a main title, axis titles, and a non-default symbol color and symbol type. *Hint: check out ?par or see examples from class 1 or class 3 R code*.
+
+(4.2) Use the `data()` function to load the "chickwts" dataset that comes with base R's "datasets" package. Then, create a boxplot of chicken weight by feed type. Ensure the plot has a main title, axis labels, and a unique color for each feed type.  You can learn about the dataset by typing `?chickwts`.  
+```{r}
+#4.1
+plot(wb$Population, wb$Cell, main = "Population vs Cell",
+     xlab = "Population", ylab = "Cell", col = "#100664", pch = 16)
+#4.2
+data(chickwts)
+gradient <- colorRampPalette(c("blue", "purple"))
+
+boxplot(weight ~ feed, data = chickwts,
+        main = "Weight by Feed",
+        xlab = "Feed", ylab = "Weight",
+        col = gradient(length(unique(chickwts$feed))))
+```
+
+
+
+
+**(5) Lists** *12 pts* The code below creates a list called `aList`
+
+(5.1)  Compute the sum of the second element of the list's third element. Store the result into an object named `mySum`. You'll want to use the `sum()` function.
+```{r}
+aList <- list(c(1, 5, 4), letters[c(1, 6, 4, 9, 22, 3)], list(c(1, 1, 1), 
+                        c(14, 13, 12), c(3, 2, 1)), c(runif(8)))
+mySum <- sum(aList[[3]][[2]])
+print(mySum)
+```
+
+(5.2) What is the difference between what is returned from the following two commands?
+```{r}
+aList[[3]][2]
+aList[[3]][[2]]
+```
+
+*The first command first gets a sublist of the first 3 elements of aList and then gets the 2nd element of the sublist*
+*because the way the sublist is returned with labeled indexes, we also get a doulbe nested 1 before*
+*The seccond command directly gets the second element of the third element of aList, so it just returns that*
+
+&nbsp;  
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+
+
