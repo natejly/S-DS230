@@ -15,17 +15,6 @@ _______________________________________________________________________________
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This homework assignment contains 5 problems. Edit this `.Rmd` file and insert your responses under the appropriate problems. Submit the knitted output of this file either as a .pdf or .doc file.  To make a pdf file, knit to .doc or .html and then convert to .pdf in either Word or your browser.
-
-Our intent is to help you
-
-1.  Practice basic R coding
-2.  Practice basic R markdown
-3.  Start dealing with data
-
-Don't panic, don't be surprised if you're frustrated.   Come to office hours with JDRS or our excellent TAs/ULAs.   You can also post questions through ED Discussion on CANVAS.
-You are welcome to work with each other - however, you **MUST** submit your own assignment that represents your own solutions.
-
 *Before submitting, delete the instructions on lines 17 through 28*
 
 **(1)  RMarkdown Practice**  *(24 points)*  Change the markdown code below as indicated.
@@ -34,7 +23,7 @@ You are welcome to work with each other - however, you **MUST** submit your own 
 
 *Make this line italics*
 
-###Make this line a third level header###
+### Make this line a third level header
 
 * Make this line a bullet point
 
@@ -106,7 +95,8 @@ names(wb)
 #3.5
 head(wb)
 #3.6
-sapply(wb, typeof) #fix
+str(wb)
+#sapply(wb, typeof)
 #3.7
 typeof(wb$Pop)
 #3.8
