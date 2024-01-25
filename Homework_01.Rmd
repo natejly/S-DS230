@@ -98,13 +98,13 @@ head(wb)
 str(wb)
 #sapply(wb, typeof)
 #3.7
-typeof(wb$Pop)
+typeof(wb$Population)
 #3.8
 na.omit(wb[, c("Country", "GNI", "Exports", "Imports")][wb$GNI > 70000, ])
 #3.9
 summary(wb$Cell)
 #3.10
-stats <- as.vector(summary(wb$Cell))
+stats <- summary(wb$Cell)
 print(stats)
 #3.11
 length(stats)
@@ -127,7 +127,10 @@ gradient <- colorRampPalette(c("blue", "purple"))
 boxplot(weight ~ feed, data = chickwts,
         main = "Weight by Feed",
         xlab = "Feed", ylab = "Weight",
-        col = gradient(length(unique(chickwts$feed))))
+        col = gradient(length(unique(chickwts$feed))),
+        cex.axis = .8
+)
+
 ```
 
 
