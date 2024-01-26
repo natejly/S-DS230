@@ -100,7 +100,8 @@ str(wb)
 #3.7
 typeof(wb$Population)
 #3.8
-na.omit(wb[, c("Country", "GNI", "Exports", "Imports")][wb$GNI > 70000, ])
+subset <- na.omit(wb[, c("Country", "GNI", "Exports", "Imports")][wb$GNI > 70000, ])
+subset
 #3.9
 summary(wb$Cell)
 #3.10
