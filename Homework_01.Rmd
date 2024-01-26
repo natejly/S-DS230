@@ -154,7 +154,7 @@ aList[[3]][[2]]
 
 *The first command first gets a sublist of the first 3 elements of aList and then gets the 2nd element of the sublist*
 *because the way the sublist is returned with labeled indexes, we also get a doulbe nested 1 before*
-*The seccond command directly gets the second element of the third element of aList, so it just returns that*
+*The seccond command directly gets the second element of the third element of aList, so it just returns that vector*
 
 &nbsp;  
 &nbsp;
