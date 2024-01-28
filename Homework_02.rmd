@@ -1,0 +1,111 @@
+---
+title: "Homework 02 Data Handling, Graphics, More R"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+subtitle: Due by 11:59pm, Friday, 2.2.24
+author: S&DS 230/530/ENV 757
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Submission Details
+
+This homework assignment contains 1 long problem. Edit this `.Rmd` file and insert your responses under the appropriate problems. Submit the knitted output of this file either as a .doc, .html, or .pdf file.
+
+Your document should look nicely formatted, with R code, plots, and text descriptions nicely integrated. 
+
+**CRITICAL 1 - for every included chunk below, remove `eval = F` before knitting!!!!**
+
+**CRITICAL 2 - Please submit knitted version of this assignment as a PDF file on GRADESCOPE  You can knit directly to a DOC and then convert to PDF in Word (choose SAVE AS), or you can knit directly to PDF if that works for you.**
+
+**DELETE LINES 15 THROUGH 25 (INCLUSIVE) BEFORE KNITTING AND SUBMITTING!**
+
+**(1) Obama Tweets: Retweets vs. Favorites**  A `.CSV` file containing recent Tweets from former President Barack Obama can be downloaded [HERE](http://reuningscherer.net/S&DS230/data/ObamaTweets.csv).  The data is sorted by date, most recent at the top.
+
+The variables (columns) are:
+
+* `text`: the body of the tweet
+* `date`: when the tweet was sent, original format
+* `date2`: when the tweet was sent, JUST the day (not the time of day)
+* `retweet_count`: how many people retweeted this tweet
+* `favorite_count`: how many people favorited this tweet
+* `is_retweet`: whether or not this tweet is a retweet of someone else's tweet
+* `source`: device used to send the tweet
+* `is_quote`: is the tweet a quote of someone else
+* `is_reply`: is the tweet a reply
+
+
+There are two ways in which other Twitter users can indicate support for a tweet: _favoriting_ and _retweeting_. For example, if a tweet has `favorite_count` = 5 and `retweet_count` = 10, then this suggests that 5 people favorited the tweet (saved it) and 10 people retweeted it (broadcasted it to their followers). 
+
+(1.1) Insert an R code chunk right below this that imports the data into a dataframe called `recent`.  Note that the data is sorted in reverse time order.  Get the header names of `recent` to confirm that the data imported correctly.  Look at the first few rows of the data and the final few rows of the data. Also get the dimension of `recent`. What is the date range of the tweets?  How many tweets does this dataset include?  
+
+```{r}
+recent <- read.csv("http://reuningscherer.net/S&DS230/data/ObamaTweets.csv")
+colnames(recent)
+dim(recent)
+```
+*The date range is from 2016-04-08 to 2023-01-13. This dataset has 2000 tweets*
+
+(1.2) Create a table that shows how many of the Tweets were quotes (that is, President Obama retweeted someone elses tweet but added additional commentary), and call this object `table1`.  Show the results of `table1`.  Write a single line that calculates the percent of Tweets that were quotes, rounds this value to two decimal places, multipies the results by 100, and pastes on a "%" symbol.  There should be no space between the number and the '%' symbol.  Finally, have the entire line read  "?% of Obama's tweets were quotes", where ? is the calculated percentage.
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+(1.3) Get summary statistics for both `favorite_count` and `retweet_count`.  Make histograms for each of these two variables as well.  Put a title on each histogram, label the horizontal axis, and make the bars orange.  How would you describe the shape of these distributions (use words like 'symmetric' or 'skewed', or perhaps the name of some distribution that has a similar shape . . .)?
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+
+(1.4) Get summary statistics for `favorite_count` FIRST for the observations for which `is_quote` is `TRUE`, then for the observations for whic 'is_quote` is `FALSE`. Compare the medians of these two distributions - what do you observe?
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+
+(1.5) Create a new dataframe called `recent_NoQuote` that contains all data from `recent` for which `is_quote` is `FALSE` (essentially, we're removing quotes and only looking at strictly original texts).  USE THIS NEW DATAFRAME for the remainder of this problem set.  Get the dimension of this dataframe to make sure the remaining number of rows (and columns) are consistent with the results in part 1.2.
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+(1.6) Make two new variables as a part of `recent_NoQuote` which will be the log base 10 transformations of `favorite_count` and `retweet_count`.  Call these variables `log10favCnt` and `log10reCnt`, respectively.  The function you want to take log base 10 is called `log10()`. **Note** - you can add a variable to dateframe by simply creating a name using the `$` operator and then assigning it the desired value : e.g. `recent_NoQuote$log10facCnt <-` *(whatever you want to assign this)*
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+(1.7)  Make histograms of these two new log-scale variables. Put a title on each histogram, label the horizontal axis, and make the bars orange.  How would you describe the shape of these transformed distributions (use words like 'symmetric' or 'skewed', or perhaps the name of some distribution that has a simlar shape . . .)?
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+
+(1.8)  Make a plot of the number of times that each tweet was favorited vs. the number of times a tweet was retweeted.  Put `favorite_count` on the x-axis and `retweet_count` on the y-axis. Label your axes, put on a main title, and make the plot characters blue.
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+(1.9) Repeat part (1.8) but use the log-transformed variables.  Label your axes, put on a main title, and make the plot characters red.  How does the scatterplot on the log-scale compare to the scatterplot on the raw scale?  Which one do you prefer?
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+
+(1.10) Create two new variables on the `recent_NoQuote` dataframe called `year` and `month` that will contain respectively the year and month the tweet was created.  You'll need to look up how to use the function `substr()`.  You'll also need to use the `as.numeric()` function to make sure that both new variables are numbers.  Show the first 20 observations for each resulting variable.
+
+*REPLACE THIS TEXT WITH YOUR R-chunk Code*
+
+(1.11)  Repeat part (1.9) BUT only for 2018 and 2022  First, create a dataframe called `recent_3` that only has observations from the specified years.  You might want to use the `%in%` operator on your newly created variable year.  Use this new dataframe to make your plot.   Use the graphics option `pch = 19` to get solid round points, and use the graphics option `col = as.factor(year)` to make different colors for 2018 and 2022  The final line of code below will add a legend to the top left of the plot.
+
+```{r, eval=F}
+#put R code here to make dataframe and plot
+
+legend("topleft",
+       legend = c("2018","2022"), 
+       col = c(1,2), 
+       pch = 19)
+```
+
+(1.12)  Write no more than three sentences that describe what you see.   Does the pattern appear any different between 2018 and 2022?
+
+*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+
