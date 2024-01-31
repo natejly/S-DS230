@@ -120,9 +120,11 @@ recent_NoQuote$month <- as.numeric(substr(recent_NoQuote$date2,6,7))
 ```
 (1.11)  Repeat part (1.9) BUT only for 2018 and 2022  First, create a dataframe called `recent_3` that only has observations from the specified years.  You might want to use the `%in%` operator on your newly created variable year.  Use this new dataframe to make your plot.   Use the graphics option `pch = 19` to get solid round points, and use the graphics option `col = as.factor(year)` to make different colors for 2018 and 2022  The final line of code below will add a legend to the top left of the plot.
 
-```{r, eval=F}
-#put R code here to make dataframe and plot
+```{r}
 
+#put R code here to make dataframe and plot
+recent_3 <- recent_NoQuote[recent_NoQuote$year %in% c(2018,2022),]
+plot(recent_3$log10favCnt,recent_3$log10reCnt,xlab = "Log10 Favorite Count",ylab = "Log10 Retweet Count",main = "Log10 Retweet Count vs. Log10 Favorite Count",col = as.factor(recent_3$year),pch = 19)
 legend("topleft",
        legend = c("2018","2022"), 
        col = c(1,2), 
@@ -131,5 +133,5 @@ legend("topleft",
 
 (1.12)  Write no more than three sentences that describe what you see.   Does the pattern appear any different between 2018 and 2022?
 
-*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+*The 2018 and 2022 data both have moderately strong positive linear association between favorites and retweets on the log scale. In 2018, there were many more likes and retweets and the black dots representing them had a higher correlation*
 
