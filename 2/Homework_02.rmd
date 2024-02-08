@@ -12,18 +12,6 @@ author: S&DS 230/530/ENV 757
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Submission Details
-
-This homework assignment contains 1 long problem. Edit this `.Rmd` file and insert your responses under the appropriate problems. Submit the knitted output of this file either as a .doc, .html, or .pdf file.
-
-Your document should look nicely formatted, with R code, plots, and text descriptions nicely integrated. 
-
-**CRITICAL 1 - for every included chunk below, remove `eval = F` before knitting!!!!**
-
-**CRITICAL 2 - Please submit knitted version of this assignment as a PDF file on GRADESCOPE  You can knit directly to a DOC and then convert to PDF in Word (choose SAVE AS), or you can knit directly to PDF if that works for you.**
-
-**DELETE LINES 15 THROUGH 25 (INCLUSIVE) BEFORE KNITTING AND SUBMITTING!**
-
 **(1) Obama Tweets: Retweets vs. Favorites**  A `.CSV` file containing recent Tweets from former President Barack Obama can be downloaded [HERE](http://reuningscherer.net/S&DS230/data/ObamaTweets.csv).  The data is sorted by date, most recent at the top.
 
 The variables (columns) are:
@@ -46,6 +34,8 @@ There are two ways in which other Twitter users can indicate support for a tweet
 ```{r}
 recent <- read.csv("http://reuningscherer.net/S&DS230/data/ObamaTweets.csv")
 colnames(recent)
+head(recent)
+tail(recent)
 dim(recent)
 ```
 *The date range is from 2016-04-08 to 2023-01-13. This dataset has 2000 tweets*
@@ -55,9 +45,8 @@ dim(recent)
 ```{r}
 table1 <- table(recent$is_quote)
 print(table1)
-paste(round((table1[2]/sum(table1))*100,2),"% of Obama's tweets were quotes",sep = "")
+paste(round(table1[2]/(sum(table1)), 2)*100, "% of Obama's tweets were quotes")
 ```
-
 (1.3) Get summary statistics for both `favorite_count` and `retweet_count`.  Make histograms for each of these two variables as well.  Put a title on each histogram, label the horizontal axis, and make the bars orange.  How would you describe the shape of these distributions (use words like 'symmetric' or 'skewed', or perhaps the name of some distribution that has a similar shape . . .)?
 
 ```{r}
@@ -68,7 +57,7 @@ retweet_summary <- summary(recent$retweet_count)
 hist(recent$favorite_count,main = "Histogram of Favorite Count",xlab = "Favorite Count",col = "orange")
 hist(recent$retweet_count,main = "Histogram of Retweet Count",xlab = "Retweet Count",col = "orange")
 ```
-*these are both examples of right skewed historgrams*
+*these are both examples of extremely right skewed historgrams, which are asymetrical*
 
 (1.4) Get summary statistics for `favorite_count` FIRST for the observations for which `is_quote` is `TRUE`, then for the observations for whic 'is_quote` is `FALSE`. Compare the medians of these two distributions - what do you observe?
 
@@ -76,7 +65,7 @@ hist(recent$retweet_count,main = "Histogram of Retweet Count",xlab = "Retweet Co
 summary(recent$favorite_count[recent$is_quote == TRUE])
 summary(recent$favorite_count[recent$is_quote == FALSE])
 ```
-*The median for the tweets that aren't quotes is 13,278 which is less than the median for the ones that are quotes at 58,453*
+*The median for the tweets that aren't quotes is 13,278 which is less than the median for the ones that are quotes at 58,453. The quartiles and maximum values indicate that quotes recieve more favorites than nonquotes*
 
 (1.5) Create a new dataframe called `recent_NoQuote` that contains all data from `recent` for which `is_quote` is `FALSE` (essentially, we're removing quotes and only looking at strictly original texts).  USE THIS NEW DATAFRAME for the remainder of this problem set.  Get the dimension of this dataframe to make sure the remaining number of rows (and columns) are consistent with the results in part 1.2.
 
@@ -98,7 +87,7 @@ hist(recent_NoQuote$log10favCnt,main = "Histogram of Log10 Favorite Count",xlab 
 hist(recent_NoQuote$log10reCnt,main = "Histogram of Log10 Retweet Count",xlab = "Log10 Retweet Count",col = "orange")
 ```
 
-*These histograms are both right skewed normal distributions* 
+*These histograms are both still slightly right skewed, and more normal looking distributions* 
 
 (1.8)  Make a plot of the number of times that each tweet was favorited vs. the number of times a tweet was retweeted.  Put `favorite_count` on the x-axis and `retweet_count` on the y-axis. Label your axes, put on a main title, and make the plot characters blue.
 
@@ -111,12 +100,15 @@ plot(recent_NoQuote$favorite_count,recent_NoQuote$retweet_count,xlab = "Favorite
 plot(recent_NoQuote$log10favCnt,recent_NoQuote$log10reCnt,xlab = "Log10 Favorite Count",ylab = "Log10 Retweet Count",main = "Log10 Retweet Count vs. Log10 Favorite Count",col = "red")
 ```
 
-*The plot that uses the log transformed variables shows are more linnear relationships between the two variables, with a lot less outliers, so I would prefer the log10 plot*
+*The plot that uses the log transformed variables shows are more linnear correlation between the two variables, with a lot less outliers, so I would prefer the log10 plot*
 (1.10) Create two new variables on the `recent_NoQuote` dataframe called `year` and `month` that will contain respectively the year and month the tweet was created.  You'll need to look up how to use the function `substr()`.  You'll also need to use the `as.numeric()` function to make sure that both new variables are numbers.  Show the first 20 observations for each resulting variable.
 
 ```{r}
 recent_NoQuote$year <- as.numeric(substr(recent_NoQuote$date2,1,4))
+head(recent_NoQuote$year, 20)
 recent_NoQuote$month <- as.numeric(substr(recent_NoQuote$date2,6,7))
+head(recent_NoQuote$month, 20)
+
 ```
 (1.11)  Repeat part (1.9) BUT only for 2018 and 2022  First, create a dataframe called `recent_3` that only has observations from the specified years.  You might want to use the `%in%` operator on your newly created variable year.  Use this new dataframe to make your plot.   Use the graphics option `pch = 19` to get solid round points, and use the graphics option `col = as.factor(year)` to make different colors for 2018 and 2022  The final line of code below will add a legend to the top left of the plot.
 
@@ -133,5 +125,5 @@ legend("topleft",
 
 (1.12)  Write no more than three sentences that describe what you see.   Does the pattern appear any different between 2018 and 2022?
 
-*The 2018 and 2022 data both have moderately strong positive linear association between favorites and retweets on the log scale. In 2018, there were many more likes and retweets and the black dots representing them had a higher correlation*
+*The 2018 and 2022 data both have moderately strong positive linear association between favorites and retweets on the log scale. In 2018, there were many more likes and retweets per tweet, and the black dots representing them had a slightly higher linear correlation*
 
