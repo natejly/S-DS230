@@ -26,7 +26,9 @@ knitr::opts_chunk$set(echo = TRUE)
       -  A vector with the integers 1 through 7
       
 You should be able to make this object in a single line of code.
-
+```{r}
+myList <- list(1:10, matrix(1:25, nrow = 5, byrow = TRUE), list("latte", c("taco", "nan"), 1:7))
+```
 *Use `[]`, `[[]]`, `[,]` notation to answer parts b) through f).*
 
 (1.2)  Make an object called `ans1` that is the fourth row of the matrix contained in `myList`.
@@ -41,13 +43,27 @@ You should be able to make this object in a single line of code.
 
 Get the results of each of your objects you created above (i.e. get them to show up in your knitted file by typing their names or putting the code line that creates each object in parentheses).
 
-*REPLACE THIS TEXT WITH YOUR R-chunk Code for all of problem 1*
-
-
+```{r}
+#1.2
+ans1 <- myList[[2]][4,]
+ans1
+#1.3
+ans2 <- sum(myList[[2]][,5])
+ans2
+#1.4
+ans3 <- rowSums(myList[[2]])
+ans3
+#1.5
+ans4 <- myList[[3]][[1]]
+ans4
+#1.6
+ans5 <- as.character(myList[[3]][[3]])
+ans5
+```
 
 **(2) Normal Quantile Plots and the Binomial Distribution** *(20 points, 3 points each, part (2.5) is 5 points)*.
 
-You may recall from your Intro Statistics course that a binomial distribution looks like a normal distribution if np > 10 and n(1-p) > 10  (i.e. as long as the average number of successes and failures are both larger than 10).  Recall that n is the number of trials, and p is the probability of success for each Bernoulli trial.   *As an example, flip a coin 30 times, count the number of heads.  n=30, p=.5, np = 15 > 10 and n(1-p) = 15 > 10, so the distribution should be approximately normal)*.
+You may recall from your Intro Statistics course that a binomial distribution looks like a normal distribution if np > 10 and n(1-p) > 10  (i.e. as long as the average number of successes and failures are both larger than 10).  Recall that n is the number of trials, and p is the probability of success for each Bernoulli trial.   *As an example, flip a coin 30 times, count the number of heads.  n=30, p=.5, np = 15 > 10 and n(1-p) = 15 > 10, so the distribution should be approximately normal*.
 
 You are going to make six normal quantile plots that simulate 100 random observations from binomial distributions with p = .2 and various values of n.
 
@@ -65,12 +81,24 @@ You are going to make six normal quantile plots that simulate 100 random observa
 *  Make the boundary lines blue (use `col.lines`)
 *  Make a main graph title that pastes the text "100 Binomial Samples, N =" to the corresponding value from `vec`.
 
-*REPLACE THIS TEXT WITH YOUR R-chunk Code for parts 2.1 through 2.5 of problem 2*
-
+```{r}
+#2.1
+library(car)
+#2.2
+vec <- 10**(0:5)
+#2.3
+par(mfrow = c(2,3))
+#2.4
+vec2 <- rbinom(5, 20, 0.8)
+#2.5 CHECK THIS ONE
+for (n in vec) {  
+  qqPlot(rbinom(100, size = n, prob = 0.2), main = paste("100 Binomial Samples, N =", n), pch = 19, col.lines = "blue")
+}
+```
 
 (2.6)  Take a look at the normal quantile plots.  For what value of n do the graphs seem to be approximately normally distributed?   Is this consistent with what you expect?   Write two complete sentences to answer these questions.
 
-*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+*For N being 1000, the graph seems to be normally distributed, as there is a smooth and continuous distribution rather than one that looks like a staircase for the ones below. Given p = 0.2 and np, n(1-p) needing to be greater than 10, I would expect anything above n=50 to have to look like a normal distribution, which n=100 sort of looks like but it's not smooth*
  
 **(3) Favorite food and Data Cleaning** *(62 points.  Parts 3.2 through 3.5, 2 pts each, other values listed below)*.
  
@@ -87,12 +115,24 @@ Your goal is similar to what we did with the question "What animal would you lik
 
 (3.4)  Show the sorted unique values of `food`.  Calculate how many unique values exist in `food`.
 
-*REPLACE THIS TEXT WITH YOUR R-chunk Code for parts (3.1) through (3.4)*
-
+```{r}
+#3.1
+food <- read.csv("http://reuningscherer.net/S&DS230/data/food_230.csv")
+#3.2
+dim(food)
+names(food)
+head(food)
+#3.3
+food <- food$Food
+#3.4
+sort(unique(food))
+length(unique(food))
+```
 (3.5)  Write a couple of sentences about what data cleaning issues you notice amoung the unique values of `food`.
 
-*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
- 
+*There are some repeats with different capitalizations and some foods are have different formats, such as being plural or having a modifier. There are also some foods that are not actually foods, such as "delicious" and "anything with cheese". Some of the foods also contain multiple food items or are cuisines and not foods*
+
+(3.6)  Cleaning Part I *(8 pts)*: Clean the data using the following steps (in order): 
 Before proceeding to data cleaning, a quick reminder example of how to remove text before or after a particular word using the regular expression `.*` Note that `.` stands for 'any character' (other than a new line), and `*` stands for '0 or more times'.
 
 Example : Find " have ", delete this AND everything preceeding or following:
@@ -121,8 +161,18 @@ At each step, you'll probably want to check what unique values of `food` are lef
 
 Your final two lines of code should again show the sorted unique values of food and the current number of unique values.
 
-*REPLACE THIS TEXT WITH YOUR R-chunk Code for part (3.6)*
-
+```{r}
+#3.6
+food <- tolower(food)
+food <- gsub(" or .*", "", food)
+food <- gsub(" and .*", "", food)
+food <- gsub(" food.*", "", food)
+food <- gsub(" cuisine.*", "", food)
+food <- gsub("[[:punct:]]", "", food)
+food <- trimws(food, "right")
+sort(unique(food))
+length(unique(food))
+```
 
 (3.7) Cleaning Part II *(10 pts)*: A few quick random cleaning items:
 
