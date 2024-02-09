@@ -260,9 +260,33 @@ Display a dataframe of the sorted tabular results of `food` to see how many indi
 
 ```{r}
 #3.9
-finaltab <- table(food)
-finaltab
+foodframe <- data.frame(sort(table(food), decreasing = T))
+foodframe
+food_counts <- table(food)
+popular_food <- names(food_counts[food_counts >= 3])
+#sorting the chicken
+food <- gsub(".*chicken.*", "chicken", food)
+#grouping fried food
+food <- gsub(".*fried.*", "fried food", food)
+#sorting asian food
+food <- gsub(".*(paneer|rice|postickers|hibachi|indonesian|turkish|vietnamese|dumplings|dal bhaat|tofu|persian).*", "asian", food)
+#sorting african food
+food <- gsub(".*(rice|african|ethiopian|tagine).*", "african", food)
+#sorting american food
+food <- gsub(".*(bbq|american|mac|hot dogs|chili|cornbread|pulled pork).*", "american", food)
+#sorting european food
+food <- gsub(".*(albanian|baguettes|crepes|lebanese|escargot|spaghetti|swedish).*", "european", food)
+#sorting south american food
+food <- gsub(".*(empanadas|guacamole|taco|farofa|flautas).*", "south american", food)
+#everything not sorted is miscellaneous
+categories <- c("chicken", "fried food", "asian", "african", "american", "european", "south american")
+#setting everything that is not popular food or a category to miscellaneous
+miscellaneous_food <- setdiff(unique(food), c(popular_food, categories))
+food[food %in% miscellaneous_food] <- "miscellaneous"
+foodframe <- data.frame(sort(table(food), decreasing = T))
+foodframe
 ```
+
 (3.10)  *(8 pts)*  Final steps and a plot:  You'll want to CAREFULLY follow the example in the code at the end of Class 05.
 
 *  Use the `toTitleCase()` function from the package `tools` to convert food to title case.
@@ -273,12 +297,22 @@ finaltab
 
 ```{r}
 #3.10
-```
+library(tools)
+food <- toTitleCase(food)
+finaltab <- table(food)
+percents <- round(finaltab/sum(finaltab)*100)
+names(finaltab) <- paste(names(finaltab), " (", percents, "%)", sep = "")
+par(mar = c(2, 6, 2, 2))
+par(cex.axis = .5)
 
+barplot(finaltab, horiz = T, col = "lightblue", las = 1, main = "Favorite Foods", xlab = "Percent of Students")
+
+```
 
 (3.11) *(3 pts)* In no more than three sentences, discuss your process and results.  Be sure to mention how many unique values of 'food' you started and ended with.  Any surprises?
 
-*REPLACE THIS TEXT WITH YOUR RESPONSE AND MAKE SURE THE RESPONSE IS IN ITALICS*
+
+*I started with 317 different unique values, and eventually came down to 34. The process started with removing duplicates by capitalizations and using some regular expressions for common foods. From there, I group some foods into the groups given and then based on their geographical cuisine group. I was suprised at the amount of data I was able to filter out while still getting a good understanding of the dataset and being able to present it in a much cleaner mamnner.*
 
 
 
