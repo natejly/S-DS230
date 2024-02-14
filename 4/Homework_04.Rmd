@@ -194,7 +194,7 @@ test1 <- t.test(log(rainfall) ~ treatment, data = clouds, conf.level = .99)
 test1
 
 ```
-*Since the p value is 0.01408 is greater than 0.01, we accept the null hypothesis, where there is no statistically signifigant difference at the %99 confidence interval*
+*Since the p value is 0.01408 is greater than 0.01, we fail to reject the null hypothesis, where there is no statistically signifigant difference at the %99 confidence interval*
 
 (3.5)  Get 10,000 boostrap samples from the data and compare the mean log rainfall between sample means.  Save these means in an object called `diffRain`.
 
@@ -211,7 +211,7 @@ diffRain = replicate(10000, mean(sample(log(clouds$rainfall), replace = TRUE)))
 quantile(diffRain, c(.01, .99))
 test1$conf.int
 ```
-*The confidence interval is 4.006294, 5.083069 , which is different from the -0.06001102, 2.34757335in test1*
+*The confidence interval is 4.006294, 5.083069 , which is different from the -0.06001102, 2.34757335 in test1. This can be attributed to bootstrapping relying on resampling from the observed data, where the t-test assumes normal distribution*
 
 (3.7)  Make a histogram of bootstrap differences in means and add vertical lines for the theoretical and bootstrapped confidence intervals.
 
