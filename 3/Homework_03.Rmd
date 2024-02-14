@@ -27,7 +27,8 @@ knitr::opts_chunk$set(echo = TRUE)
       
 You should be able to make this object in a single line of code.
 ```{r}
-myList <- list(1:10, matrix(1:25, nrow = 5, byrow = TRUE), list("latte", c("taco", "nan"), 1:7))
+myList <- list(1:10, matrix(1:25, nrow = 5, byrow = TRUE),
+list("latte", c("taco", "nan"), 1:7))
 ```
 *Use `[]`, `[[]]`, `[,]` notation to answer parts b) through f).*
 
@@ -90,15 +91,17 @@ vec <- 10**(0:5)
 par(mfrow = c(2,3))
 #2.4
 vec2 <- rbinom(5, 20, 0.8)
-#2.5 CHECK THIS ONE
+#2.5 
 for (n in vec) {  
-  qqPlot(rbinom(100, size = n, prob = 0.2), main = paste("100 Binomial Samples, N =", n), pch = 19, col.lines = "blue")
+  qqPlot(rbinom(100, size = n, prob = 0.2), col = "red", 
+  main = paste("100 Binomial Samples, N =", n), 
+  pch = 19, col.lines = "blue")
 }
 ```
 
 (2.6)  Take a look at the normal quantile plots.  For what value of n do the graphs seem to be approximately normally distributed?   Is this consistent with what you expect?   Write two complete sentences to answer these questions.
 
-*For N being 1000, the graph seems to be normally distributed, as there is a smooth and continuous distribution rather than one that looks like a staircase for the ones below. Given p = 0.2 and np, n(1-p) needing to be greater than 10, I would expect anything above n=50 to have to look like a normal distribution, which n=100 sort of looks like but it's not smooth*
+*For N being 100 and above, the graphs seem to be normally distributed, as there is a relatively smooth and continuous distribution rather than one that looks like a staircase for the ones below. Given p = 0.2 and np, n(1-p) needing to be greater than 10, I would expect anything above n=50 to have to look like a normal distribution, which is the case here*
  
 **(3) Favorite food and Data Cleaning** *(62 points.  Parts 3.2 through 3.5, 2 pts each, other values listed below)*.
  
@@ -162,7 +165,7 @@ At each step, you'll probably want to check what unique values of `food` are lef
 Your final two lines of code should again show the sorted unique values of food and the current number of unique values.
 
 ```{r}
-#3.6 HELP
+#3.6
 food <- tolower(food)
 food <- gsub(" or .*", "", food)
 food <- gsub(" and .*", "", food)
@@ -243,7 +246,8 @@ Your final two lines of code should again show the sorted unique values of food 
 
 ```{r}
 #3.8
-searchvec <- c("asian", "chinese", "vietnamese", "italian", "indian", "thai", "mexican", "brazilian", "korean")
+searchvec <- c("asian", "chinese", "vietnamese", "italian", 
+"indian", "thai", "mexican", "brazilian", "korean")
 for (i in searchvec) {
   food <- gsub(paste(".*", i, ".*", sep = ""), i, food)
 }
@@ -269,18 +273,39 @@ food <- gsub(".*chicken.*", "chicken", food)
 #grouping fried food
 food <- gsub(".*fried.*", "fried food", food)
 #sorting asian food
-food <- gsub(".*(paneer|rice|postickers|hibachi|indonesian|turkish|vietnamese|dumplings|dal bhaat|tofu|persian).*", "asian", food)
+food <- gsub(".*(paneer|rice|postickers|hibachi|indonesian|turkish|vietnamese|
+dumplings|dal bhaat|tofu|persian|korean|japanese|indian).*", "asian", food)
 #sorting african food
 food <- gsub(".*(rice|african|ethiopian|tagine).*", "african", food)
 #sorting american food
-food <- gsub(".*(bbq|american|mac|hot dogs|chili|cornbread|pulled pork).*", "american", food)
+food <- gsub(".*(bbq|american|mac|hot dogs|chili|cornbread|pulled pork).*", 
+"american", food)
 #sorting european food
-food <- gsub(".*(albanian|baguettes|crepes|lebanese|escargot|spaghetti|swedish).*", "european", food)
+food <- gsub(".*(albanian|baguettes|cottage|crepes|lebanese|escargot|spaghetti|
+swedish).*", "european", food)
 #sorting south american food
-food <- gsub(".*(empanadas|guacamole|taco|farofa|flautas).*", "south american", food)
+food <- gsub(".*(empanadas|guacamole|taco|farofa|flautas|
+arepa|brazil|ceviche|rico|mexi).*", "south american", food)
+#sorting seafood
+food <- gsub(".*(salmon|oyster|fish|seafood).*", "seafood", food)
+#sorting veggies
+food <- gsub(".*(tomato|spotato|ginger|artichoke|corn).*", "veggies", food)
+#sorting fruit
+food <- gsub(".*(fruit|strawberries|bananas|mango|nectarines).*", "fruit", food)
+#sorting dessert
+food <- gsub(".*(cookie|cake|cinnamon|creepe|donut|pancake|chocolate).*", 
+"dessert", food)
+#sorting italian
+food <- gsub("gnocchi|spaghetti|lasagna|macaroni", "italian", food)
+#sorting american foods
+food <- gsub(".*(fried|steak|chipotle|dog|doritos|bowl|ribs|roast|patty|ham).*",
+ "american", food)
 #everything not sorted is miscellaneous
-categories <- c("chicken", "fried food", "asian", "african", "american", "european", "south american")
-#setting everything that is not popular food or a category to miscellaneous
+categories <- c("chicken", "fried food", "asian", "african", "american",
+ "european", "south american", "seafood",
+ "veggies", "fruit", "dessert", "italian")
+
+#setting everything that is not popular food or a category to miscellaneous 
 miscellaneous_food <- setdiff(unique(food), c(popular_food, categories))
 food[food %in% miscellaneous_food] <- "miscellaneous"
 foodframe <- data.frame(sort(table(food), decreasing = T))
@@ -302,17 +327,17 @@ food <- toTitleCase(food)
 finaltab <- table(food)
 percents <- round(finaltab/sum(finaltab)*100)
 names(finaltab) <- paste(names(finaltab), " (", percents, "%)", sep = "")
-par(mar = c(2, 6, 2, 2))
+par(mar = c(5, 6, 2, 1))
 par(cex.axis = .5)
 
-barplot(finaltab, horiz = T, col = "lightblue", las = 1, main = "Favorite Foods", xlab = "Percent of Students")
+barplot(sort(finaltab), horiz = T, col = "lightblue", 
+las = 1, main = "Favorite Foods Survey", xlab = "Percent of Students")
 
 ```
 
 (3.11) *(3 pts)* In no more than three sentences, discuss your process and results.  Be sure to mention how many unique values of 'food' you started and ended with.  Any surprises?
 
-
-*I started with 317 different unique values, and eventually came down to 34. The process started with removing duplicates by capitalizations and using some regular expressions for common foods. From there, I group some foods into the groups given and then based on their geographical cuisine group. I was suprised at the amount of data I was able to filter out while still getting a good understanding of the dataset and being able to present it in a much cleaner mamnner.*
+*I started with 218 unique values, and eventually came down to 29. The process started with removing duplicates by capitalizations and using some regular expressions for common foods. From there, I group some foods into the groups given and then based on their geographical cuisine group and other types. I was suprised at the amount of data and different modifiers I was able to filter out, and also by the amount of people who prefered asian food, specifically sushi.*
 
 
 

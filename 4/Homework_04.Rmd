@@ -1,0 +1,226 @@
+---
+title: "Homework 04 T-tests, Sampling Distributions, and the Bootstrap"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+subtitle: Due by 11:59pm, Saturday, February 17, 2024, 11:59pm
+author: S&DS 230/530/ENV 757
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+**(1) Practice with Loops.** *(10 points)* For this problem, use loops even if you could do the task without them.
+
+(1.1) A Fibonacci sequence is a series of integers where each number after the 2nd number is found by adding together the two integers before it. Starting with 0 and 1, the sequence goes:
+
+> 0, 1, 1, 2, 3, 5, ...
+
+Write a loop that fills a vector called `myFib` with this sequence, starting from 0 and 1 (first two entries), and going up to a total length of 30 numbers (that is, `length(myFib)` should be 30). Display the last value in `myFib`.
+
+(1.2) Here is the link to the World Bank data : 
+
+> http://www.reuningscherer.net/s&ds230/data/WB.2016.csv
+
+Read the data into a dataframe called `wb`.  Write a loop to fill a vector called `naVals` having length equal to the number of columns in the World Bank data frame. The i-th entry in `naVals` should be a number (>= 0) equal to the total number of missing values in the i-th column of World Bank data frame. Make a histogram of `naVals` and label as appropriate.
+
+*(For full credit, use only one for-loop to do part b)*
+
+```{r}
+#1.1
+myFib = c(0,1)
+for(x in 3:30){
+  myFib[x] = myFib[x-1] + myFib[x-2]
+}
+myFib
+#1.2
+wb = read.csv("http://www.reuningscherer.net/s&ds230/data/WB.2016.csv")
+naVals = c()
+for(i in 1:ncol(wb)){
+  naVals[i] = sum(is.na(wb[,i]))
+}
+hist(naVals, main = "Histogram of Missing Values in World Bank Data", xlab = "Number of Missing Values", ylab = "Frequency")
+
+```
+
+**(2) Simulations with the Exponential Distribution** *(50 points)*.
+
+For this problem, we'll investigate the sampling distributional characteristics of three statistics.   In particular, suppose we take a sample of size 15 from an exponential distribution.   We can use the CLT to say something about how far the sample mean is likely to be from the true mean, but how far are the sample median or the sample variance likely to be from the true values in an exponential distribution where we take a sample of size 15?   Also, what do we expect the distribution of these statistics to look like!
+
+(2.1) *(8 points)* First, let's get a quick sense of what an exponential distribution looks like where the mean is 2.   By the way, it's handy to know that for an exponential distribution with mean 2, the variance is 4 and the median is 2*ln(2). You can read about the exponential distribution  [HERE](https://en.wikipedia.org/wiki/Exponential_distribution).
+
+
+The code below gives a quick plot of this distribution.  Your job is to succinctly answer what each part of the code does.   You'll probably need to get help on the function `dexp(), seq()` and on a few of the graphics parameters in `par()`.
+
+```{r, fig.width= 7, fig.height=5}
+#Get exponential probabilities - note that rate = .5 gives us mean of 2 (mean is 1/rate)
+probs <- dexp(seq(0,15, by = .1), rate = .5)
+
+#dexp returns values of an exponential distribution given in the first argument, and the rate in the second argument
+#rate = .5 gives us mean of 2 (mean is 1/rate)
+#by = .1 gives us the step size of the sequence
+
+#Plot sampling distribution
+plot(seq(0, 15, by = .1), probs, 
+     main = "Probability distribution function for Exponential Dist with Mean = 2",
+     xlab = "X",
+     ylab = "Density",
+     type = 'l', 
+     lwd = 3, 
+     col = "blue"
+)
+
+#type = 'l' means give type line plot
+#lwd = 3 means make the line width 3
+```
+
+(2.2) *(7 points)* Following the example in class 8, get a random sample of 15 observations from an exponential distribution with mean 2.   Repeat this process 10000 times.   Save your results in a matrix called `samples` with 10,000 rows and 15 columns.   The function you'll need is `rexp()`.  Display the dimension of `samples'. Show the first 4 rows of `samples` but round the values to three decimal places.
+
+
+```{r}
+# To make grading easier, please leave the following line of code in your assignment
+set.seed(230) 
+samples = matrix(NA, nrow = 10000, ncol = 15)
+for(i in 1:10000){
+  samples[i,] = rexp(15, rate = .5)
+}
+dim(samples)
+head(round(samples[1:4,], 3),6)
+```
+
+
+
+(2.3)  *(7 points)* Calculate the sample mean for each sample of size 15 (i.e. calculate the mean for each row of `samples`).   Repeat this process to get the sample median and the sample variance for each sample of size 15.   Save these values in objects called, respectively, `smeans, smedians, svariance`.
+
+```{r}
+smeans <- apply(samples, 1, mean)
+smedians <- apply(samples, 1, median)
+svariance <- apply(samples, 1, var)
+
+```
+
+(2.4) *(10 points)* 
+* Create a sample histogram of the sample means (make the bars green, make sure you label your axes and put on a clear title).  
+* Make a normal quantile plot of the sample means using the `qqPlot()` function in the `car` package.  Comment on whether the CLT seems to be in effect.
+* Get summary statistics OF THE SAMPLE MEANS and save this to an object called `ans1`.  Using code, display only the element of `ans` that is the sample mean, rounded to two decimal places.  Is this the value you expect?  
+*  Calculate and display the sample standard deviation of the sample means (use the function `sd()`)and display rounded to two decimal places.  Then, use code to calculate the value you'd expect based on the CLT, again rounded to two decimal places.   Are the two values similar?
+
+
+```{r}
+#2.4
+library(car)
+hist(smeans, col = "green", main = "Histogram of Sample Means", xlab = "Sample Means", ylab = "Frequency")
+qqPlot(smeans, main = "Normal Quantile Plot of Sample Means")
+ans1 <- summary(smeans)
+round(ans1[[4]], 2)
+round(sd(smeans), 2)
+round(2/sqrt(15), 2)
+```
+*As the quantile plot shows a more normally distributed, and less skewed plot, we can infer that from adding more data, we approach a normal distribution, thus the CLT is in effect*
+*By construction, we would expect a mean of 2, which is also what is oberved*
+*The sample standard deviation is 0.51, and the expected value is 0.52, which are very similar*
+
+
+(2.5)  *(10 points)* 
+* Create a sample histogram of the sample MEDIANS (make the bars red, make sure you label your axes and put on a clear title).  
+* Make a normal quantile plot of the sample medians using the `qqPlot()` function in the `car` package.  Do the medians seem normally distributed?
+* Display summary statistics OF THE SAMPLE MEDIANS.  Is the median of the sample medians the value you expect?  
+*  Calculate and display the sample standard deviation of the sample medians and display rounded to two decimal places.  Is this value similar to the sd of the sample means?
+
+
+```{r}
+#2.5
+hist(smedians, col = "red", main = "Histogram of Sample Medians", xlab = "Sample Medians", ylab = "Frequency")
+qqPlot(smedians, main = "Normal Quantile Plot of Sample Medians")
+summary(smedians)
+round(sd(smedians), 2)
+round(sd(smeans), 2)
+```
+*The medians are a normal distribution with a slight right skew. The median of the sample medians is 1.3985, which is very close to the expected value of 1.3863, or 2ln(2).*
+*The sample standard deviation of the medians is 0.53, which is similar to the standard deviation of the means, which is 0.51*
+
+
+(2.6)  *(10 points)* 
+* Create a sample histogram of the sample VARIANCES (make the bars blue, make sure you label your axes and put on a clear title).  
+* Make a normal quantile plot of the sample VARIANCES using the `qqPlot()` function in the `car` package.  Do the variances seem normally distributed?
+* Display summary statistics OF THE SAMPLE VARIANCES  Is the mean of the sample variances the value you expect?  
+*  Calculate and display the sample standard deviation of the sample variances.  Just a note that without messy math, there's no easy way to know this number.
+
+```{r}
+#2.6
+hist(svariance, col = "blue", main = "Histogram of Sample Variances", xlab = "Sample Variances", ylab = "Frequency")
+qqPlot(svariance, main = "Normal Quantile Plot of Sample Variances")
+round(summary(svariance), 2)
+round(sd(svariance), 2)
+
+```
+*The variances do not seem to be normally distributed. The observed mean of the sample variances is 4, which is the same as the expected 2^2 = 4.*
+
+**(3) Cloud Seeding and the Bootstrap** *(40 points, 5 points each part, part e) counts double*.
+
+This problem examines results of a study of cloud seeding.   The data is [HERE](http://reuningscherer.net/S&DS230/data/rainandseedingclouds.csv). The variables are `rainfall` and `treatment` (SEEDED and UNSEEDED).
+
+(3.1)  Read the data into an object called `clouds`.
+
+```{r}
+#3.1
+clouds = read.csv("http://reuningscherer.net/S&DS230/data/rainandseedingclouds.csv")
+head(clouds)
+```
+
+(3.2)  Make side by side boxplots of rainfall by treatment.   Make side by side boxplots of log(rainfall) by treatment.  Write a sentence or two about what you observe.  Which scale do you prefer?
+
+```{r}
+boxplot (rainfall ~ treatment, data = clouds, main = "Rainfall by Treatment", xlab = "Treatment", ylab = "Rainfall")
+boxplot (log(rainfall) ~ treatment, data = clouds, main = "Log Rainfall by Treatment", xlab = "Treatment", ylab = "Log Rainfall")
+```
+*We observe in both graphs that the seeded treatment had a there was a higher average rainfall. The log scale is prefered, as it amplifies the small differences in data*
+
+(3.3)  Calculate summary statistics for rainfall by treatment on the raw scale and the log scale.
+
+```{r}
+#3.3
+tapply(clouds$rainfall, clouds$treatment, summary)
+tapply(log(clouds$rainfall), clouds$treatment, summary)
+```
+(3.4)  Calculate a two-sample t-test comparing mean log rainfall between treatments.  Save results in an object called `test1` and display the results.  Use alpha = .01 (i.e. make a 99% CI).   Is there evidence of a difference between groups?
+
+```{r}
+#3.4
+test1 <- t.test(log(rainfall) ~ treatment, data = clouds, conf.level = .99)
+test1
+
+```
+*Since the p value is 0.01408 is greater than 0.01, we accept the null hypothesis, where there is no statistically signifigant difference at the %99 confidence interval*
+
+(3.5)  Get 10,000 boostrap samples from the data and compare the mean log rainfall between sample means.  Save these means in an object called `diffRain`.
+
+```{r}
+# To make grading easier, please leave the following line of code in your assignment
+set.seed(230) 
+diffRain = replicate(10000, mean(sample(log(clouds$rainfall), replace = TRUE)))
+```
+
+(3.6)  Calculate a 99% Bootstrap confidence interval.  How to results compare to the theoretical interval in part d?
+
+```{r}
+#3.6
+quantile(diffRain, c(.01, .99))
+test1$conf.int
+```
+*The confidence interval is 4.006294, 5.083069 , which is different from the -0.06001102, 2.34757335in test1*
+
+(3.7)  Make a histogram of bootstrap differences in means and add vertical lines for the theoretical and bootstrapped confidence intervals.
+
+```{r}
+hist(diffRain, main = "Histogram of Bootstrap Differences in Means", xlab = "Difference in Means", ylab = "Frequency")
+abline(v = test1$conf.int, col = "red")
+abline(v = quantile(diffRain, c(.005, .995)), col = "blue")
+```
+
+
+
+
