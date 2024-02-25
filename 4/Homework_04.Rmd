@@ -35,7 +35,7 @@ myFib = c(0,1)
 for(x in 3:30){
   myFib[x] = myFib[x-1] + myFib[x-2]
 }
-myFib
+myFib[30]
 #1.2
 wb = read.csv("http://www.reuningscherer.net/s&ds230/data/WB.2016.csv")
 naVals = c()
@@ -59,8 +59,8 @@ The code below gives a quick plot of this distribution.  Your job is to succinct
 #Get exponential probabilities - note that rate = .5 gives us mean of 2 (mean is 1/rate)
 probs <- dexp(seq(0,15, by = .1), rate = .5)
 
-#dexp returns values of an exponential distribution given in the first argument, and the rate in the second argument
-#rate = .5 gives us mean of 2 (mean is 1/rate)
+#dexp returns values of an exponential density given in the first argument, and the rate in the second argument
+#rate = .5 is the parameter that specifies 1/mean gives us mean of 2 (mean is 1/rate)
 #by = .1 gives us the step size of the sequence
 
 #Plot sampling distribution
@@ -83,12 +83,11 @@ plot(seq(0, 15, by = .1), probs,
 ```{r}
 # To make grading easier, please leave the following line of code in your assignment
 set.seed(230) 
-samples = matrix(NA, nrow = 10000, ncol = 15)
-for(i in 1:10000){
-  samples[i,] = rexp(15, rate = .5)
-}
+N <- 15
+TIMES <- 10000
+samples <- matrix(rexp(N*TIMES, rate = 0.5), ncol = N)
 dim(samples)
-head(round(samples[1:4,], 3),6)
+head(round(samples, 3),4)
 ```
 
 
@@ -121,7 +120,7 @@ round(2/sqrt(15), 2)
 ```
 *As the quantile plot shows a more normally distributed, and less skewed plot, we can infer that from adding more data, we approach a normal distribution, thus the CLT is in effect*
 *By construction, we would expect a mean of 2, which is also what is oberved*
-*The sample standard deviation is 0.51, and the expected value is 0.52, which are very similar*
+*The sample standard deviation is 0.52, and the expected value is 0.52, which are similar*
 
 
 (2.5)  *(10 points)* 
@@ -139,8 +138,8 @@ summary(smedians)
 round(sd(smedians), 2)
 round(sd(smeans), 2)
 ```
-*The medians are a normal distribution with a slight right skew. The median of the sample medians is 1.3985, which is very close to the expected value of 1.3863, or 2ln(2).*
-*The sample standard deviation of the medians is 0.53, which is similar to the standard deviation of the means, which is 0.51*
+*Looking at the normal quantiule plot, the points curve, indicating a right skew, which is also seen in the histogram. The median of the sample medians is 1.3985, which is very close to the expected value of 1.3863, or 2ln(2).*
+*The sample standard deviation of the medians is 0.52, which is similar to the standard deviation of the means, which is 0.52*
 
 
 (2.6)  *(10 points)* 
@@ -201,24 +200,45 @@ test1
 ```{r}
 # To make grading easier, please leave the following line of code in your assignment
 set.seed(230) 
-diffRain = replicate(10000, mean(sample(log(clouds$rainfall), replace = TRUE)))
+attach(clouds)
+N <- 10000
+diffRain <- rep(NA, N)
+for (i in 1:N){
+sSeed <- sample(rainfall[treatment == "SEEDED"],
+                  sum(treatment == "SEEDED"), replace = TRUE)
+  sUnseed <- sample(rainfall[treatment == "UNSEEDED"],
+                  sum(treatment == "UNSEEDED"), replace = TRUE)
+  diffRain[i] <- mean(log(sSeed)) - mean(log(sUnseed))
+}
 ```
 
 (3.6)  Calculate a 99% Bootstrap confidence interval.  How to results compare to the theoretical interval in part d?
 
 ```{r}
 #3.6
-quantile(diffRain, c(.01, .99))
-test1$conf.int
+round(quantile(diffRain, c(.01, .99)),2)
+
 ```
-*The confidence interval is 4.006294, 5.083069 , which is different from the -0.06001102, 2.34757335 in test1. This can be attributed to bootstrapping relying on resampling from the observed data, where the t-test assumes normal distribution*
+*The confidence interval is 0.14, 2.2 , which is different from the -0.06001102, 2.34757335 in test1. These intervals are very similar*
 
 (3.7)  Make a histogram of bootstrap differences in means and add vertical lines for the theoretical and bootstrapped confidence intervals.
 
 ```{r}
-hist(diffRain, main = "Histogram of Bootstrap Differences in Means", xlab = "Difference in Means", ylab = "Frequency")
+
+hist(diffRain, main = "Samples Means Diff in Log(Rainfall)", 
+     xlab = "Difference in Means", ylab = "Frequency", col = "lightblue")
+
+legend("topright",
+       c("Original CI","Boot CI"),
+       lwd = 3,
+       col = c("red","blue"),
+       lty = c(2,1),
+       cex = 0.6)
+
 abline(v = test1$conf.int, col = "red")
-abline(v = quantile(diffRain, c(.005, .995)), col = "blue")
+abline(v = quantile(diffRain, c(0.005, 0.995)), col = "blue")
+
+
 ```
 
 
